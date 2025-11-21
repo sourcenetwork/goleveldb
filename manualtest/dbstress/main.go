@@ -20,13 +20,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/syndtr/goleveldb/leveldb/errors"
-	"github.com/syndtr/goleveldb/leveldb/filter"
-	"github.com/syndtr/goleveldb/leveldb/opt"
-	"github.com/syndtr/goleveldb/leveldb/storage"
-	"github.com/syndtr/goleveldb/leveldb/table"
-	"github.com/syndtr/goleveldb/leveldb/util"
+	"github.com/sourcenetwork/goleveldb/leveldb"
+	"github.com/sourcenetwork/goleveldb/leveldb/errors"
+	"github.com/sourcenetwork/goleveldb/leveldb/filter"
+	"github.com/sourcenetwork/goleveldb/leveldb/opt"
+	"github.com/sourcenetwork/goleveldb/leveldb/storage"
+	"github.com/sourcenetwork/goleveldb/leveldb/table"
+	"github.com/sourcenetwork/goleveldb/leveldb/util"
 )
 
 var (

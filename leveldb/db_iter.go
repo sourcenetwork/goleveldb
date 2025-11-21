@@ -12,9 +12,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/syndtr/goleveldb/leveldb/iterator"
-	"github.com/syndtr/goleveldb/leveldb/opt"
-	"github.com/syndtr/goleveldb/leveldb/util"
+	"github.com/sourcenetwork/goleveldb/leveldb/iterator"
+	"github.com/sourcenetwork/goleveldb/leveldb/opt"
+	"github.com/sourcenetwork/goleveldb/leveldb/util"
 )
 
 type memdbReleaser struct {
