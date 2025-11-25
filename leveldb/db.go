@@ -70,7 +70,7 @@ type DB struct {
 	writeAckC    chan error
 	writeDelay   time.Duration
 	writeDelayN  int
-	tr           *Transaction
+	tr           atomic.Pointer[Transaction]
 
 	// Compaction.
 	compCommitLk     sync.Mutex
@@ -565,7 +565,6 @@ func (db *DB) recoverJournal() error {
 					fr.Close()
 					return err
 				}
-				ofd = storage.FileDesc{}
 			}
 
 			// Replay journal to memdb.
@@ -1193,8 +1192,8 @@ func (db *DB) Close() error {
 	close(db.closeC)
 
 	// Discard open transaction.
-	if db.tr != nil {
-		db.tr.Discard()
+	if tr := db.tr.Swap(nil); tr != nil {
+		tr.Discard()
 	}
 
 	// Acquire writer lock.

@@ -181,7 +181,7 @@ func (tr *Transaction) Write(b *Batch, wo *opt.WriteOptions) error {
 
 func (tr *Transaction) setDone() {
 	tr.closed = true
-	tr.db.tr = nil
+	tr.db.tr.Store(nil)
 	tr.mem.decref()
 	<-tr.db.writeLockC
 }
@@ -308,7 +308,7 @@ func (db *DB) OpenTransaction() (*Transaction, error) {
 		return nil, ErrClosed
 	}
 
-	if db.tr != nil {
+	if db.tr.Load() != nil {
 		panic("leveldb: has open transaction")
 	}
 
@@ -330,6 +330,6 @@ func (db *DB) OpenTransaction() (*Transaction, error) {
 		mem: db.mpoolGet(0),
 	}
 	tr.mem.incref()
-	db.tr = tr
+	db.tr.Store(tr)
 	return tr, nil
 }
