@@ -312,15 +312,23 @@ func (db *DB) OpenTransaction() (*Transaction, error) {
 		panic("leveldb: has open transaction")
 	}
 
+	// If the transaction errors the lock must be released or a deadlock will occur.
+	var err error
+	defer func() {
+		if err != nil {
+			<-db.writeLockC
+		}
+	}()
+
 	// Flush current memdb.
 	if db.mem != nil && db.mem.Len() != 0 {
-		if _, err := db.rotateMem(0, true); err != nil {
+		if _, err = db.rotateMem(0, true); err != nil {
 			return nil, err
 		}
 	}
 
 	// Wait compaction when certain threshold reached.
-	if err := db.waitCompaction(); err != nil {
+	if err = db.waitCompaction(); err != nil {
 		return nil, err
 	}
 

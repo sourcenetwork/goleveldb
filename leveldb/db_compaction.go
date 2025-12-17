@@ -689,9 +689,6 @@ type cAuto struct {
 
 func (r cAuto) ack(err error) {
 	if r.ackC != nil {
-		defer func() {
-			_ = recover()
-		}()
 		r.ackC <- err
 	}
 }
@@ -704,9 +701,6 @@ type cRange struct {
 
 func (r cRange) ack(err error) {
 	if r.ackC != nil {
-		defer func() {
-			_ = recover()
-		}()
 		r.ackC <- err
 	}
 }
@@ -721,8 +715,9 @@ func (db *DB) compTrigger(compC chan<- cCmd) {
 
 // This will trigger auto compaction and/or wait for all compaction to be done.
 func (db *DB) compTriggerWait(compC chan<- cCmd) (err error) {
-	ch := make(chan error)
-	defer close(ch)
+	// closing this channel causes a race condition
+	// instead we let the garbage collector clean it up
+	ch := make(chan error, 1)
 	// Send cmd.
 	select {
 	case compC <- cAuto{ch}:
@@ -743,8 +738,9 @@ func (db *DB) compTriggerWait(compC chan<- cCmd) (err error) {
 
 // Send range compaction request.
 func (db *DB) compTriggerRange(compC chan<- cCmd, level int, min, max []byte) (err error) {
-	ch := make(chan error)
-	defer close(ch)
+	// closing this channel causes a race condition
+	// instead we let the garbage collector clean it up
+	ch := make(chan error, 1)
 	// Send cmd.
 	select {
 	case compC <- cRange{level, min, max, ch}:
